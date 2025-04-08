@@ -1,19 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, {useEffect,  useState, useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Button, Text, StyleSheet } from 'react-native';
 import { Audio, AVPlaybackStatus, AVPlaybackStatusSuccess } from 'expo-av';
-import WaveformVisualizer from './WaveformVisualiser';
-
-
 
 const MAX_DURATION = 60; // seconds
 
 const AudioRecorder = () => {
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({ title: 'Yapp' });
+  }, [navigation]);
+
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [audioUri, setAudioUri] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
-  const waveformData = [0.2, 0.4, 0.8, 0.5, 0.3, 0.7, 0.2, 0.6, 0.3, 0.5]; // mock for now
   const [progress, setProgress] = useState(0)
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -79,7 +81,8 @@ const AudioRecorder = () => {
       sound.setOnPlaybackStatusUpdate((status: AVPlaybackStatus) => {
         if (status.isLoaded) {
           const s = status as AVPlaybackStatusSuccess;
-          setProgress(s.positionMillis / s.durationMillis);
+          const duration = s.durationMillis ?? 1; // avoid divide by 0
+          setProgress(s.positionMillis / duration);
           if (!s.isPlaying) setIsPlaying(false);
         }
       });
@@ -115,11 +118,6 @@ const AudioRecorder = () => {
         </View>
       )}
 
-        {audioUri && (
-        <View style={{ marginVertical: 20 }}>
-            <WaveformVisualizer data={waveformData} progress={progress} />
-        </View>
-        )}
     </View>
   );
 };
