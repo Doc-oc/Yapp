@@ -1,19 +1,20 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import AudioRecorder from '../components/AudioRecorder';
+import {Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
-export default function App() {
+export default function Home() {
+  const router = useRouter();
+  const handleLogin = () => {
+    router.push('/login');
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <AudioRecorder />
-    </SafeAreaView>
+    <View style={{
+      flex: 1, 
+      alignItems: 'center',
+      justifyContent: 'center', 
+    }}>
+      <Text className="text-3xl font-bold text-center mt-20">Welcome to Yapp 🎙️</Text>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
